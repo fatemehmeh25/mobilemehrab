@@ -8,12 +8,15 @@
       </p>
   
       <div class="product-grid">
-        <Product
+        <router-link :to="`/product/${product.id}`">
+            <Product
           v-for="product in filteredProducts"
           :key="product.id"
           :product="product"
           @add-to-cart="addToCart"
         />
+    </router-link>
+
       </div>
     </section>
   </template>
