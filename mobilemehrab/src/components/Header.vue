@@ -1,21 +1,31 @@
-<!-- src/components/Header.vue -->
 <template>
     <header class="header">
+        <button class="btn-menu" @click="$emit('toggle-sidebar')" aria-label="Toggle Sidebar">
+      ☰
+    </button>
+
       <router-link to="/" class="logo">MyMobileShop</router-link>
   
       <nav class="nav">
         <router-link to="/shop" class="nav-link">Shop</router-link>
         <router-link to="/cart" class="nav-link">Cart</router-link>
   
-        <div class="auth-links">
-          <template v-if="!isLoggedIn">
-            <router-link to="/login" class="btn btn-outline">Login</router-link>
-            <router-link to="/signup" class="btn btn-primary">Sign Up</router-link>
-          </template>
-          <template v-else>
-            <router-link to="/account" class="nav-link">Account</router-link>
-            <button class="btn btn-logout" @click="logout">Logout</button>
-          </template>
+        <div class="account-wrapper" @click="toggleDropdown" tabindex="0" @blur="closeDropdown">
+          <button class="btn-account">
+            Account
+            <span class="arrow" :class="{ open: dropdownOpen }">▼</span>
+          </button>
+  
+          <div v-if="dropdownOpen" class="dropdown-menu">
+            <template v-if="!isLoggedIn">
+              <router-link to="/login" class="dropdown-item" @click="closeDropdown">Login</router-link>
+              <router-link to="/signup" class="dropdown-item" @click="closeDropdown">Sign Up</router-link>
+            </template>
+            <template v-else>
+              <router-link to="/account" class="dropdown-item" @click="closeDropdown">My Account</router-link>
+              <button class="dropdown-item logout-btn" @click="logout">Logout</button>
+            </template>
+          </div>
         </div>
       </nav>
     </header>
@@ -26,15 +36,24 @@
     name: 'Header',
     data() {
       return {
-        // Replace with real auth check logic or Pinia store/state
-        isLoggedIn: false,
+        isLoggedIn: false, // Replace with real auth state (Pinia, Vuex, etc.)
+        dropdownOpen: false,
       }
     },
     methods: {
+      toggleDropdown() {
+        this.dropdownOpen = !this.dropdownOpen
+      },
+      closeDropdown() {
+        // Delay to allow click event on dropdown items
+        setTimeout(() => {
+          this.dropdownOpen = false
+        }, 150)
+      },
       logout() {
-        // Replace with real logout logic
         alert('Logged out!')
         this.isLoggedIn = false
+        this.dropdownOpen = false
         this.$router.push('/')
       },
     },
@@ -47,7 +66,7 @@
     justify-content: space-between;
     padding: 1rem 2rem;
     align-items: center;
-    background-color: #fff;
+    background: white;
     border-bottom: 1px solid #eee;
   }
   
@@ -61,7 +80,8 @@
   .nav {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
+    position: relative;
   }
   
   .nav-link {
@@ -70,50 +90,78 @@
     font-weight: 500;
   }
   
-  .auth-links {
+  .account-wrapper {
+    position: relative;
+    outline: none;
+  }
+  
+  .btn-account {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    color: #007bff;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.25rem;
+    font-size: 1rem;
+    user-select: none;
   }
   
-  .btn {
-    padding: 0.4rem 1rem;
+  .arrow {
+    font-size: 0.7rem;
+    transition: transform 0.2s ease;
+  }
+  
+  .arrow.open {
+    transform: rotate(180deg);
+  }
+  
+  .dropdown-menu {
+    position: absolute;
+    top: 130%;
+    right: 0;
+    background: white;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
     border-radius: 6px;
+    padding: 0.5rem 0;
+    width: 140px;
+    z-index: 100;
+  }
+  
+  .dropdown-item {
+    display: block;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
     cursor: pointer;
-    font-weight: 600;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .logout-btn {
+    background: none;
     border: none;
-  }
-  
-  .btn-outline {
-    border: 1.5px solid #007bff;
-    color: #007bff;
-    background: transparent;
-  }
-  
-  .btn-outline:hover {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .btn-primary {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .btn-primary:hover {
-    background-color: #0056b3;
-  }
-  
-  .btn-logout {
-    background: transparent;
-    border: none;
+    width: 100%;
+    text-align: left;
     color: #d33;
     font-weight: 600;
-    cursor: pointer;
   }
   
-  .btn-logout:hover {
-    text-decoration: underline;
+  .logout-btn:hover {
+    background-color: #fee;
   }
+
+  .btn-menu {
+  font-size: 1.6rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 1rem;
+  user-select: none;
+}
   </style>
   

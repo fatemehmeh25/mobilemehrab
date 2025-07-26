@@ -1,98 +1,90 @@
 <template>
-  <div id="app" class="app-container">
-    <!-- Header always visible -->
-    <Header />
+  <div id="app">
+    <!-- Header emits toggle-sidebar event -->
+    <Header @toggle-sidebar="sidebarOpen = !sidebarOpen" />
 
-    <div class="layout">
-      <!-- Sidebar (collapsible or hidden on mobile) -->
-      <Sidebar v-if="showSidebar" class="sidebar" />
+    <!-- Sidebar visibility controlled by sidebarOpen -->
+    <Sidebar :visible="sidebarOpen" @close="sidebarOpen = false" />
 
-      <!-- Main content injected from routes -->
-      <main class="main-content">
-        <router-view />
-      </main>
-    </div>
+    <!-- Overlay for mobile when sidebar is open -->
+    <div
+      v-if="sidebarOpen"
+      class="overlay"
+      @click="sidebarOpen = false"
+      aria-hidden="true"
+    ></div>
 
-    <!-- Footer -->
+    <!-- Main content area -->
+    <main :class="{ 'with-sidebar': sidebarOpen }">
+      <router-view />
+    </main>
+
+    <!-- Footer always at the bottom -->
     <Footer />
   </div>
 </template>
 
 <script>
-import Header from './components/Header.vue'
-import Footer from './components/Footer.vue'
-import Sidebar from './components/Sidebar.vue'
+import Header from '../components/Header.vue'
+import Sidebar from '../components/Sidebar.vue'
+import Footer from '../components/Footer.vue'
 
 export default {
   name: 'App',
-  components: {
-    Header,
-    Footer,
-    Sidebar,
-  },
+  components: { Header, Sidebar, Footer },
   data() {
     return {
-      windowWidth: window.innerWidth,
+      sidebarOpen: false,
     }
-  },
-  computed: {
-    showSidebar() {
-      return this.windowWidth >= 768 // Show sidebar on tablet/desktop
-    },
-  },
-  created() {
-    window.addEventListener('resize', this.handleResize)
-  },
-  beforeUnmount() {
-    window.removeEventListener('resize', this.handleResize)
-  },
-  methods: {
-    handleResize() {
-      this.windowWidth = window.innerWidth
-    },
   },
 }
 </script>
 
-<style scoped>
-/* Layout wrapper */
-.app-container {
+<style>
+/* Root app container uses flex layout */
+#app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  background-color: #f8f8f8;
+  height: 100vh;
+  overflow-x: hidden;
+  position: relative;
 }
 
-/* Layout: Sidebar + Main */
-.layout {
-  display: flex;
-  flex: 1;
+/* Header and footer have fixed height, main fills rest */
+header,
+footer {
+  flex-shrink: 0;
 }
 
-/* Sidebar styling */
-.sidebar {
-  width: 220px;
-  background-color: #ffffff;
-  border-right: 1px solid #e0e0e0;
-}
-
-/* Main content */
-.main-content {
-  flex: 1;
+/* Main content grows and scrolls */
+main {
+  flex-grow: 1;
   padding: 1rem;
-  background-color: #fff;
+  overflow-y: auto;
+  transition: margin-left 0.3s ease;
 }
 
-/* Mobile optimizations */
-@media (max-width: 767px) {
-  .sidebar {
-    display: none;
-  }
+/* When sidebar open on desktop, shift main content */
+.with-sidebar {
+  margin-left: 250px; /* width of sidebar */
+}
 
-  .main-content {
-    padding: 0.75rem;
+/* Sidebar is fixed positioned, so app layout ignores it */
+/* Overlay to darken background on mobile when sidebar is open */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 900; /* less than sidebar's 1000 */
+}
+
+/* Responsive: on small screens sidebar overlays content, no margin */
+@media (max-width: 768px) {
+  .with-sidebar {
+    margin-left: 0;
   }
 }
 </style>
-
-

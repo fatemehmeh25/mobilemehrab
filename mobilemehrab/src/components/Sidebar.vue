@@ -1,78 +1,66 @@
+<!-- Sidebar.vue -->
 <template>
-    <aside class="sidebar">
-      <nav>
-        <h2 class="title">Categories</h2>
-        <ul class="category-list">
-          <li v-for="category in categories" :key="category.slug">
-            <router-link
-              :to="`/shop?category=${category.slug}`"
-              class="category-link"
-              active-class="active"
-            >
-              {{ category.name }}
-            </router-link>
-          </li>
-        </ul>
-      </nav>
+    <aside :class="{ open: visible }" class="sidebar">
+      <button class="btn-close" @click="$emit('close')" aria-label="Close Sidebar">×</button>
+  
+      <h3>Categories</h3>
+      <ul>
+        <li><router-link to="/shop?category=phones" @click="$emit('close')">Phones</router-link></li>
+        <li><router-link to="/shop?category=tablets" @click="$emit('close')">Tablets</router-link></li>
+        <li><router-link to="/shop?category=accessories" @click="$emit('close')">Accessories</router-link></li>
+      </ul>
     </aside>
   </template>
   
   <script>
   export default {
     name: 'Sidebar',
-    data() {
-      return {
-        categories: [
-          { name: 'All', slug: 'all' },
-          { name: 'Smartphones', slug: 'smartphones' },
-          { name: 'Tablets', slug: 'tablets' },
-          { name: 'Accessories', slug: 'accessories' },
-          { name: 'Wearables', slug: 'wearables' },
-          { name: 'Chargers', slug: 'chargers' },
-        ],
-      }
+    props: {
+      visible: Boolean,
     },
   }
   </script>
   
   <style scoped>
   .sidebar {
-    background-color: #fafafa;
-    padding: 1.5rem 1rem;
-    border-right: 1px solid #eee;
-    height: 100%;
-    width: 100%;
+    position: fixed;
+    top: 0;
+    left: -250px; /* hidden by default */
+    width: 250px;
+    height: 100vh;
+    background: #f8f8f8;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    padding: 1rem;
+    transition: left 0.3s ease;
+    z-index: 1000;
   }
   
-  .title {
-    font-size: 1rem;
-    font-weight: 600;
+  .sidebar.open {
+    left: 0;
+  }
+  
+  .btn-close {
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
     margin-bottom: 1rem;
-    color: #333;
+    user-select: none;
   }
-  
-  .category-list {
+  ul {
     list-style: none;
     padding: 0;
-    margin: 0;
   }
-  
-  .category-link {
-    display: block;
-    padding: 0.5rem 0;
-    color: #444;
+  li {
+    margin-bottom: 1rem;
+  }
+  a {
+    color: #333;
     text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s ease-in-out;
-  }
-  
-  .category-link:hover {
-    color: #007bff;
-  }
-  
-  .active {
-    color: #007bff;
     font-weight: 600;
+  }
+  a:hover {
+    text-decoration: underline;
   }
   </style>
   

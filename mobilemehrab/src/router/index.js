@@ -1,13 +1,13 @@
 // src/router/index.js (or wherever your router is defined)
 import { createRouter, createWebHistory } from 'vue-router'
 
-import Home from '@/pages/Home.vue'
-import Shop from '@/pages/Shop.vue'
-import Cart from '@/pages/Cart.vue'
-import Checkout from '@/pages/Checkout.vue'
-import Login from '@/pages/Login.vue'
-import SignUp from '@/pages/SignUp.vue'
-import Account from '@/pages/Account.vue'
+import Home from '../pages/Home.vue'
+import Shop from '../pages/Shop.vue'
+import Cart from '../pages/Cart.vue'
+import Checkout from '../pages/Checkout.vue'
+import Login from '../pages/Login.vue'
+import SignUp from '../pages/SignUp.vue'
+import Account from '../pages/Account.vue'
 
 const routes = [
   { path: '/', component: Home },
